@@ -1,0 +1,436 @@
+Build a COMPLETE, FULLY FUNCTIONAL educational platform called "Moz-Gondza" using React + Vite for frontend, Node.js + Express for backend, PostgreSQL for database, and JWT authentication.
+
+IMPORTANT REQUIREMENTS:
+- EVERYTHING must be 100% functional.
+- ALL texts, labels, buttons, forms, validation messages, descriptions, notifications, placeholders, and UI content MUST be in Portuguese.
+- The PROMPT is in English, but the APPLICATION must be in Portuguese.
+- Must work on WINDOWS (Windows 10/11) ONLY.
+- DO NOT use Linux/macOS commands.
+- Use Windows-compatible commands, paths, scripts, environment variables, and setup.
+- The platform must run perfectly inside Replit preview.
+- No mock data unless absolutely necessary.
+- Create a production-ready architecture.
+- Make everything responsive (desktop, tablet, mobile).
+
+TECH STACK:
+Frontend:
+- React + Vite
+- React Router DOM
+- Context API for authentication
+- Axios for API requests
+- KaTeX for mathematical rendering
+- CSS Modules or clean CSS architecture
+- Responsive UI
+
+Backend:
+- Node.js + Express
+- PostgreSQL database
+- JWT Authentication
+- bcryptjs for password hashing
+- REST API
+- Role-based authorization (admin/user)
+
+Database:
+- PostgreSQL
+- Drizzle ORM
+
+WINDOWS REQUIREMENTS:
+DO NOT USE:
+- bash
+- chmod
+- Linux shell scripts
+- macOS commands
+- apt-get
+- brew
+
+USE WINDOWS-COMPATIBLE COMMANDS:
+- npm
+- npx
+- PowerShell/CMD compatible scripts
+- Windows paths
+- Cross-platform environment configs
+
+PROJECT STRUCTURE MUST BE EXPLICITLY CREATED:
+
+moz-gondza/
+│
+├── frontend/
+│   ├── index.html
+│   ├── package.json
+│   ├── vite.config.js
+│   └── src/
+│       ├── main.jsx
+│       ├── App.jsx
+│       ├── index.css
+│       │
+│       ├── context/
+│       │   └── AuthContext.jsx
+│       │
+│       ├── components/
+│       │   ├── Layout.jsx
+│       │   ├── Navbar.jsx
+│       │   ├── Footer.jsx
+│       │   ├── ProtectedRoute.jsx
+│       │   ├── LatexRenderer.jsx
+│       │   ├── ProgressBar.jsx
+│       │   ├── QuizCard.jsx
+│       │   └── LoadingSpinner.jsx
+│       │
+│       ├── pages/
+│       │   ├── Home.jsx
+│       │   ├── Registro.jsx
+│       │   ├── Login.jsx
+│       │   ├── Dashboard.jsx
+│       │   ├── Exames.jsx
+│       │   ├── ExameDetalhe.jsx
+│       │   ├── Quizzes.jsx
+│       │   ├── QuizDetalhe.jsx
+│       │   ├── Videos.jsx
+│       │   ├── Publicacoes.jsx
+│       │   ├── FAQ.jsx
+│       │   ├── Contacto.jsx
+│       │   ├── Termos.jsx
+│       │   ├── Leaderboard.jsx
+│       │   ├── Perfil.jsx
+│       │   ├── Configuracoes.jsx
+│       │   ├── Notificacoes.jsx
+│       │   │
+│       │   ├── admin/
+│       │   │   ├── AdminDashboard.jsx
+│       │   │   ├── AdminExames.jsx
+│       │   │   ├── AdminQuizzes.jsx
+│       │   │   ├── AdminVideos.jsx
+│       │   │   ├── AdminPublicacoes.jsx
+│       │   │   └── AdminUsers.jsx
+│       │
+│       └── services/
+│           ├── api.js
+│           ├── auth.js
+│           └── progress.js
+│
+├── backend/
+│   ├── package.json
+│   ├── .env
+│   ├── server.js
+│   │
+│   ├── routes/
+│   ├── middleware/
+│   ├── controllers/
+│   ├── models/
+│   ├── services/
+│   ├── lib/
+│   └── database/
+│
+└── README.md
+
+=====================================
+LANDING PAGE (HOME)
+=====================================
+
+Create a PROFESSIONAL educational landing page.
+
+Hero Section:
+- Full-width dark blue background (#1e3a5f)
+- White text
+- Title: "Moz-Gondza"
+- Subtitle:
+"Capacitando estudantes e professores através da aprendizagem interactiva"
+- Description:
+"Moz-Gondza é uma plataforma educacional que oferece quizzes interactivos, resultados detalhados, exames resolvidos e explicações passo a passo."
+
+Buttons:
+- "Começar Gratuitamente" → /registro
+- "Saber Mais"
+
+Features Section:
+Create beautiful feature cards with hover effects.
+
+Cards:
+1. Quizzes Interactivos
+2. Resultados Detalhados
+3. Exames Resolvidos
+4. Vídeo-Aulas
+5. Acompanhamento de Progresso
+6. Publicações Académicas
+
+Card design:
+- White background
+- Border
+- Shadow
+- Rounded corners
+- Hover animation
+- Responsive grid
+
+About Section:
+Background: #f9f9f9
+
+Title:
+"Sobre a Moz-Gondza"
+
+Description:
+Explain mission and vision in Portuguese.
+
+Testimonials Section:
+Title:
+"O que os nossos utilizadores dizem"
+
+3 testimonial cards:
+- Students
+- Teachers
+
+CTA Section:
+Orange background (#e64a19)
+
+Text:
+"Junte-se à Moz-Gondza hoje e comece a aprender de forma mais inteligente!"
+
+Button:
+"Criar Conta"
+→ /registro
+
+=====================================
+AUTHENTICATION SYSTEM
+=====================================
+
+Implement FULL authentication:
+
+Register page:
+Fields:
+- Nome Completo
+- Email
+- Palavra-passe
+- Confirmar Palavra-passe
+
+Validation:
+- required fields
+- email validation
+- minimum password length
+- matching passwords
+
+Login page:
+Fields:
+- Email
+- Palavra-passe
+
+Authentication:
+- JWT token
+- localStorage persistence
+- protected routes
+
+User roles:
+- user
+- admin
+
+=====================================
+DASHBOARD
+=====================================
+
+Create a modern dashboard.
+
+Include:
+
+Welcome section:
+- "Bom dia"
+- "Boa tarde"
+- "Boa noite"
+
+Statistics:
+- Quizzes feitos
+- Exercícios concluídos
+- Percentagem de progresso
+- Disciplinas estudadas
+
+Progress tracking:
+- Subject progress bars
+- Completion percentage
+
+Quick access:
+- Exames
+- Quizzes
+- Vídeos
+- Publicações
+
+=====================================
+EXAMS SYSTEM
+=====================================
+
+Create a COMPLETE solved exams system.
+
+Subjects:
+- Matemática
+- Física
+- Química
+- Biologia
+- Português
+- História
+
+Years:
+2004–2026
+
+Exam details:
+- Question statement
+- Step-by-step solution
+- Mathematical equations rendered using KaTeX
+- Expand/collapse explanations
+
+Progress:
+- Mark exercise as completed
+- Save in database
+- Show progress %
+
+=====================================
+QUIZ SYSTEM
+=====================================
+
+Build FULLY FUNCTIONAL quizzes.
+
+Features:
+- Multiple choice
+- Timer
+- Instant feedback
+- Final score
+- Correct/incorrect answers
+- Save progress
+- Quiz history
+
+=====================================
+VIDEO SYSTEM
+=====================================
+
+Create a video lessons section.
+
+Features:
+- Video cards
+- Embedded YouTube player
+- Categories by subject
+- Search
+- Filters
+
+=====================================
+PUBLICATIONS
+=====================================
+
+Create publications/articles system.
+
+Features:
+- Academic articles
+- Reader mode
+- Categories
+- Search
+
+=====================================
+LEADERBOARD
+=====================================
+
+Create a ranking page:
+
+Features:
+- Top students
+- Podium (top 3)
+- Ranking table
+- Student points
+- Progress competition
+
+=====================================
+ADMIN PANEL
+=====================================
+
+FULL admin panel.
+
+Admin can:
+
+- Manage users
+- Add/edit/delete exams
+- Add/edit/delete quizzes
+- Add/edit/delete videos
+- Add/edit/delete publications
+- View statistics
+
+Protect admin routes.
+
+=====================================
+DATABASE TABLES
+=====================================
+
+Create proper PostgreSQL schema:
+
+users
+progress
+quizzes
+quiz_attempts
+exames
+videos
+publicacoes
+notifications
+
+=====================================
+NAVBAR
+=====================================
+
+Sticky navbar:
+- Home
+- Exames
+- Quizzes
+- Vídeos
+- Publicações
+- Classificação
+- FAQ
+- Contacto
+
+Authenticated:
+- Dashboard
+- Perfil
+- Sair
+
+Admin:
+- Admin
+
+Mobile responsive hamburger menu.
+
+=====================================
+DESIGN
+=====================================
+
+Professional UI.
+
+Palette:
+Dark blue: #1e3a5f
+Orange: #e64a19
+White: #ffffff
+Light gray: #f9f9f9
+
+Requirements:
+- Beautiful UI
+- Smooth hover effects
+- Responsive
+- Clean typography
+- Modern cards
+- Soft shadows
+- Rounded corners
+
+=====================================
+IMPORTANT
+=====================================
+
+1. EVERYTHING MUST WORK 100%.
+2. NO PLACEHOLDER FEATURES.
+3. NO BROKEN ROUTES.
+4. ALL API endpoints functional.
+5. ALL FORMS connected to backend.
+6. ALL descriptions MUST be in Portuguese.
+7. Show the FULL directory tree first.
+8. Then generate ALL files.
+9. Ensure frontend renders correctly in Replit preview.
+10. Configure scripts for WINDOWS only (NOT Linux/macOS).
+11. Include package.json scripts compatible with Windows.
+12. Include .env example.
+13. Include setup instructions for Windows CMD/PowerShell.
+14. Ensure the application starts successfully without manual fixes.
+15. Fix any errors automatically.
+16. Test routes and authentication flow.
+
+At the end:
+- Show complete file structure.
+- Show how to run the project on Windows.
+- Ensure no missing imports or broken dependencies.
+- Verify everything works before finishing.

@@ -1,22 +1,41 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Moz-Gondza Educational Platform API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Authentication
+  - name: users
+    description: User management
+  - name: exames
+    description: Exams
+  - name: quizzes
+    description: Quizzes
+  - name: videos
+    description: Video lessons
+  - name: publicacoes
+    description: Publications
+  - name: progress
+    description: User progress
+  - name: leaderboard
+    description: Rankings
+  - name: notifications
+    description: Notifications
+  - name: dashboard
+    description: Dashboard statistics
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,13 +43,1143 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /auth/register:
+    post:
+      operationId: register
+      tags: [auth]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterInput"
+      responses:
+        "201":
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Validation error
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /users:
+    get:
+      operationId: listUsers
+      tags: [users]
+      summary: List all users (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer }
+        - name: limit
+          in: query
+          schema: { type: integer }
+        - name: search
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Users list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserList"
+
+  /users/{id}:
+    get:
+      operationId: getUser
+      tags: [users]
+      summary: Get user by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: User
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    patch:
+      operationId: updateUser
+      tags: [users]
+      summary: Update user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdate"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    delete:
+      operationId: deleteUser
+      tags: [users]
+      summary: Delete user (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: Deleted
+
+  /exames:
+    get:
+      operationId: listExames
+      tags: [exames]
+      summary: List exams
+      parameters:
+        - name: disciplina
+          in: query
+          schema: { type: string }
+        - name: ano
+          in: query
+          schema: { type: integer }
+        - name: page
+          in: query
+          schema: { type: integer }
+        - name: limit
+          in: query
+          schema: { type: integer }
+        - name: search
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Exams list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExameList"
+    post:
+      operationId: createExame
+      tags: [exames]
+      summary: Create exam (admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExameInput"
+      responses:
+        "201":
+          description: Created exam
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exame"
+
+  /exames/{id}:
+    get:
+      operationId: getExame
+      tags: [exames]
+      summary: Get exam by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Exam
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exame"
+    patch:
+      operationId: updateExame
+      tags: [exames]
+      summary: Update exam (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExameUpdate"
+      responses:
+        "200":
+          description: Updated exam
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exame"
+    delete:
+      operationId: deleteExame
+      tags: [exames]
+      summary: Delete exam (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: Deleted
+
+  /exames/{id}/complete:
+    post:
+      operationId: completeExame
+      tags: [exames]
+      summary: Mark exam exercise as completed
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompleteExameInput"
+      responses:
+        "200":
+          description: Progress updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Progress"
+
+  /quizzes:
+    get:
+      operationId: listQuizzes
+      tags: [quizzes]
+      summary: List quizzes
+      parameters:
+        - name: disciplina
+          in: query
+          schema: { type: string }
+        - name: dificuldade
+          in: query
+          schema: { type: string }
+        - name: page
+          in: query
+          schema: { type: integer }
+        - name: limit
+          in: query
+          schema: { type: integer }
+        - name: search
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Quizzes list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuizList"
+    post:
+      operationId: createQuiz
+      tags: [quizzes]
+      summary: Create quiz (admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QuizInput"
+      responses:
+        "201":
+          description: Created quiz
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Quiz"
+
+  /quizzes/{id}:
+    get:
+      operationId: getQuiz
+      tags: [quizzes]
+      summary: Get quiz by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Quiz
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Quiz"
+    patch:
+      operationId: updateQuiz
+      tags: [quizzes]
+      summary: Update quiz (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QuizUpdate"
+      responses:
+        "200":
+          description: Updated quiz
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Quiz"
+    delete:
+      operationId: deleteQuiz
+      tags: [quizzes]
+      summary: Delete quiz (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: Deleted
+
+  /quizzes/{id}/submit:
+    post:
+      operationId: submitQuiz
+      tags: [quizzes]
+      summary: Submit quiz attempt
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QuizSubmitInput"
+      responses:
+        "200":
+          description: Quiz result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuizAttempt"
+
+  /quizzes/attempts:
+    get:
+      operationId: listMyQuizAttempts
+      tags: [quizzes]
+      summary: List my quiz attempts
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Attempts list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/QuizAttempt"
+
+  /videos:
+    get:
+      operationId: listVideos
+      tags: [videos]
+      summary: List videos
+      parameters:
+        - name: disciplina
+          in: query
+          schema: { type: string }
+        - name: page
+          in: query
+          schema: { type: integer }
+        - name: limit
+          in: query
+          schema: { type: integer }
+        - name: search
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Videos list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VideoList"
+    post:
+      operationId: createVideo
+      tags: [videos]
+      summary: Create video (admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VideoInput"
+      responses:
+        "201":
+          description: Created video
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Video"
+
+  /videos/{id}:
+    get:
+      operationId: getVideo
+      tags: [videos]
+      summary: Get video by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Video
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Video"
+    patch:
+      operationId: updateVideo
+      tags: [videos]
+      summary: Update video (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VideoUpdate"
+      responses:
+        "200":
+          description: Updated video
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Video"
+    delete:
+      operationId: deleteVideo
+      tags: [videos]
+      summary: Delete video (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: Deleted
+
+  /publicacoes:
+    get:
+      operationId: listPublicacoes
+      tags: [publicacoes]
+      summary: List publications
+      parameters:
+        - name: categoria
+          in: query
+          schema: { type: string }
+        - name: page
+          in: query
+          schema: { type: integer }
+        - name: limit
+          in: query
+          schema: { type: integer }
+        - name: search
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Publications list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicacaoList"
+    post:
+      operationId: createPublicacao
+      tags: [publicacoes]
+      summary: Create publication (admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PublicacaoInput"
+      responses:
+        "201":
+          description: Created publication
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Publicacao"
+
+  /publicacoes/{id}:
+    get:
+      operationId: getPublicacao
+      tags: [publicacoes]
+      summary: Get publication by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Publication
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Publicacao"
+    patch:
+      operationId: updatePublicacao
+      tags: [publicacoes]
+      summary: Update publication (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PublicacaoUpdate"
+      responses:
+        "200":
+          description: Updated publication
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Publicacao"
+    delete:
+      operationId: deletePublicacao
+      tags: [publicacoes]
+      summary: Delete publication (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: Deleted
+
+  /progress:
+    get:
+      operationId: getMyProgress
+      tags: [progress]
+      summary: Get current user progress
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Progress
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProgress"
+
+  /leaderboard:
+    get:
+      operationId: getLeaderboard
+      tags: [leaderboard]
+      summary: Get leaderboard
+      parameters:
+        - name: limit
+          in: query
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Leaderboard
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LeaderboardEntry"
+
+  /notifications:
+    get:
+      operationId: listNotifications
+      tags: [notifications]
+      summary: List user notifications
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Notifications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Notification"
+
+  /notifications/{id}/read:
+    patch:
+      operationId: markNotificationRead
+      tags: [notifications]
+      summary: Mark notification as read
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Updated notification
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Notification"
+
+  /dashboard/stats:
+    get:
+      operationId: getDashboardStats
+      tags: [dashboard]
+      summary: Get dashboard statistics
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Dashboard stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStats"
+
+  /dashboard/admin-stats:
+    get:
+      operationId: getAdminStats
+      tags: [dashboard]
+      summary: Get admin dashboard statistics
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Admin stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminStats"
+
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
     HealthStatus:
       type: object
       properties:
         status:
           type: string
-      required:
-        - status
+      required: [status]
 
+    RegisterInput:
+      type: object
+      required: [nome, email, password]
+      properties:
+        nome: { type: string, minLength: 2 }
+        email: { type: string, format: email }
+        password: { type: string, minLength: 6 }
+
+    LoginInput:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string }
+        password: { type: string }
+
+    AuthResponse:
+      type: object
+      required: [token, user]
+      properties:
+        token: { type: string }
+        user:
+          $ref: "#/components/schemas/User"
+
+    User:
+      type: object
+      required: [id, nome, email, role, pontos, createdAt]
+      properties:
+        id: { type: integer }
+        nome: { type: string }
+        email: { type: string }
+        role: { type: string }
+        pontos: { type: integer }
+        avatar: { type: ["string", "null"] }
+        bio: { type: ["string", "null"] }
+        createdAt: { type: string }
+
+    UserUpdate:
+      type: object
+      properties:
+        nome: { type: string }
+        bio: { type: ["string", "null"] }
+        avatar: { type: ["string", "null"] }
+        role: { type: string }
+
+    UserList:
+      type: object
+      required: [data, total, page, limit]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        total: { type: integer }
+        page: { type: integer }
+        limit: { type: integer }
+
+    Exame:
+      type: object
+      required: [id, titulo, disciplina, ano, questoes, createdAt]
+      properties:
+        id: { type: integer }
+        titulo: { type: string }
+        disciplina: { type: string }
+        ano: { type: integer }
+        descricao: { type: ["string", "null"] }
+        questoes:
+          type: array
+          items:
+            $ref: "#/components/schemas/Questao"
+        createdAt: { type: string }
+
+    Questao:
+      type: object
+      required: [id, numero, enunciado, solucao]
+      properties:
+        id: { type: integer }
+        numero: { type: integer }
+        enunciado: { type: string }
+        solucao: { type: string }
+        latex: { type: ["string", "null"] }
+
+    ExameInput:
+      type: object
+      required: [titulo, disciplina, ano, questoes]
+      properties:
+        titulo: { type: string }
+        disciplina: { type: string }
+        ano: { type: integer }
+        descricao: { type: ["string", "null"] }
+        questoes:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuestaoInput"
+
+    QuestaoInput:
+      type: object
+      required: [numero, enunciado, solucao]
+      properties:
+        numero: { type: integer }
+        enunciado: { type: string }
+        solucao: { type: string }
+        latex: { type: ["string", "null"] }
+
+    ExameUpdate:
+      type: object
+      properties:
+        titulo: { type: string }
+        disciplina: { type: string }
+        ano: { type: integer }
+        descricao: { type: ["string", "null"] }
+
+    ExameList:
+      type: object
+      required: [data, total, page, limit]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Exame"
+        total: { type: integer }
+        page: { type: integer }
+        limit: { type: integer }
+
+    CompleteExameInput:
+      type: object
+      required: [questaoId]
+      properties:
+        questaoId: { type: integer }
+
+    Quiz:
+      type: object
+      required: [id, titulo, disciplina, dificuldade, perguntas, createdAt]
+      properties:
+        id: { type: integer }
+        titulo: { type: string }
+        disciplina: { type: string }
+        dificuldade: { type: string }
+        descricao: { type: ["string", "null"] }
+        tempLimite: { type: ["integer", "null"] }
+        perguntas:
+          type: array
+          items:
+            $ref: "#/components/schemas/Pergunta"
+        createdAt: { type: string }
+
+    Pergunta:
+      type: object
+      required: [id, texto, opcoes, respostaCorreta]
+      properties:
+        id: { type: integer }
+        texto: { type: string }
+        opcoes:
+          type: array
+          items: { type: string }
+        respostaCorreta: { type: integer }
+        explicacao: { type: ["string", "null"] }
+
+    QuizInput:
+      type: object
+      required: [titulo, disciplina, dificuldade, perguntas]
+      properties:
+        titulo: { type: string }
+        disciplina: { type: string }
+        dificuldade: { type: string }
+        descricao: { type: ["string", "null"] }
+        tempLimite: { type: ["integer", "null"] }
+        perguntas:
+          type: array
+          items:
+            $ref: "#/components/schemas/PerguntaInput"
+
+    PerguntaInput:
+      type: object
+      required: [texto, opcoes, respostaCorreta]
+      properties:
+        texto: { type: string }
+        opcoes:
+          type: array
+          items: { type: string }
+        respostaCorreta: { type: integer }
+        explicacao: { type: ["string", "null"] }
+
+    QuizUpdate:
+      type: object
+      properties:
+        titulo: { type: string }
+        disciplina: { type: string }
+        dificuldade: { type: string }
+        descricao: { type: ["string", "null"] }
+        tempLimite: { type: ["integer", "null"] }
+
+    QuizList:
+      type: object
+      required: [data, total, page, limit]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Quiz"
+        total: { type: integer }
+        page: { type: integer }
+        limit: { type: integer }
+
+    QuizSubmitInput:
+      type: object
+      required: [respostas, tempoGasto]
+      properties:
+        respostas:
+          type: array
+          items: { type: integer }
+        tempoGasto: { type: integer }
+
+    QuizAttempt:
+      type: object
+      required: [id, quizId, userId, pontuacao, acertos, total, tempoGasto, createdAt]
+      properties:
+        id: { type: integer }
+        quizId: { type: integer }
+        quizTitulo: { type: ["string", "null"] }
+        userId: { type: integer }
+        pontuacao: { type: integer }
+        acertos: { type: integer }
+        total: { type: integer }
+        tempoGasto: { type: integer }
+        respostas:
+          type: ["array", "null"]
+          items: { type: integer }
+        createdAt: { type: string }
+
+    Video:
+      type: object
+      required: [id, titulo, disciplina, youtubeId, createdAt]
+      properties:
+        id: { type: integer }
+        titulo: { type: string }
+        disciplina: { type: string }
+        descricao: { type: ["string", "null"] }
+        youtubeId: { type: string }
+        duracao: { type: ["string", "null"] }
+        createdAt: { type: string }
+
+    VideoInput:
+      type: object
+      required: [titulo, disciplina, youtubeId]
+      properties:
+        titulo: { type: string }
+        disciplina: { type: string }
+        descricao: { type: ["string", "null"] }
+        youtubeId: { type: string }
+        duracao: { type: ["string", "null"] }
+
+    VideoUpdate:
+      type: object
+      properties:
+        titulo: { type: string }
+        disciplina: { type: string }
+        descricao: { type: ["string", "null"] }
+        youtubeId: { type: string }
+        duracao: { type: ["string", "null"] }
+
+    VideoList:
+      type: object
+      required: [data, total, page, limit]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Video"
+        total: { type: integer }
+        page: { type: integer }
+        limit: { type: integer }
+
+    Publicacao:
+      type: object
+      required: [id, titulo, categoria, conteudo, autor, createdAt]
+      properties:
+        id: { type: integer }
+        titulo: { type: string }
+        categoria: { type: string }
+        resumo: { type: ["string", "null"] }
+        conteudo: { type: string }
+        autor: { type: string }
+        imagem: { type: ["string", "null"] }
+        createdAt: { type: string }
+
+    PublicacaoInput:
+      type: object
+      required: [titulo, categoria, conteudo, autor]
+      properties:
+        titulo: { type: string }
+        categoria: { type: string }
+        resumo: { type: ["string", "null"] }
+        conteudo: { type: string }
+        autor: { type: string }
+        imagem: { type: ["string", "null"] }
+
+    PublicacaoUpdate:
+      type: object
+      properties:
+        titulo: { type: string }
+        categoria: { type: string }
+        resumo: { type: ["string", "null"] }
+        conteudo: { type: string }
+        autor: { type: string }
+        imagem: { type: ["string", "null"] }
+
+    PublicacaoList:
+      type: object
+      required: [data, total, page, limit]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Publicacao"
+        total: { type: integer }
+        page: { type: integer }
+        limit: { type: integer }
+
+    Progress:
+      type: object
+      required: [userId, exameId, questoesCompletas]
+      properties:
+        userId: { type: integer }
+        exameId: { type: integer }
+        questoesCompletas:
+          type: array
+          items: { type: integer }
+        percentagem: { type: integer }
+
+    UserProgress:
+      type: object
+      required: [quizzesFeitos, exerciciosConcluidos, percentagemGeral, disciplinas]
+      properties:
+        quizzesFeitos: { type: integer }
+        exerciciosConcluidos: { type: integer }
+        percentagemGeral: { type: integer }
+        pontosTotais: { type: integer }
+        disciplinas:
+          type: array
+          items:
+            $ref: "#/components/schemas/DisciplinaProgress"
+
+    DisciplinaProgress:
+      type: object
+      required: [disciplina, percentagem, exerciciosConcluidos, totalExercicios]
+      properties:
+        disciplina: { type: string }
+        percentagem: { type: integer }
+        exerciciosConcluidos: { type: integer }
+        totalExercicios: { type: integer }
+
+    LeaderboardEntry:
+      type: object
+      required: [posicao, userId, nome, pontos, quizzesFeitos]
+      properties:
+        posicao: { type: integer }
+        userId: { type: integer }
+        nome: { type: string }
+        avatar: { type: ["string", "null"] }
+        pontos: { type: integer }
+        quizzesFeitos: { type: integer }
+
+    Notification:
+      type: object
+      required: [id, userId, titulo, mensagem, lida, createdAt]
+      properties:
+        id: { type: integer }
+        userId: { type: integer }
+        titulo: { type: string }
+        mensagem: { type: string }
+        lida: { type: boolean }
+        tipo: { type: ["string", "null"] }
+        createdAt: { type: string }
+
+    DashboardStats:
+      type: object
+      required: [quizzesFeitos, exerciciosConcluidos, percentagemGeral, pontos, recentAttempts, disciplinaProgress]
+      properties:
+        quizzesFeitos: { type: integer }
+        exerciciosConcluidos: { type: integer }
+        percentagemGeral: { type: integer }
+        pontos: { type: integer }
+        recentAttempts:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuizAttempt"
+        disciplinaProgress:
+          type: array
+          items:
+            $ref: "#/components/schemas/DisciplinaProgress"
+
+    AdminStats:
+      type: object
+      required: [totalUsers, totalExames, totalQuizzes, totalVideos, totalPublicacoes, recentUsers]
+      properties:
+        totalUsers: { type: integer }
+        totalExames: { type: integer }
+        totalQuizzes: { type: integer }
+        totalVideos: { type: integer }
+        totalPublicacoes: { type: integer }
+        recentUsers:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
