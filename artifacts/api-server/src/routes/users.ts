@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { db, usersTable } from "@workspace/db";
-import { eq, ilike, or, sql } from "drizzle-orm";
+import { db, usersTable, quizAttemptsTable, quizzesTable } from "@workspace/db";
+import { eq, ilike, or, sql, inArray } from "drizzle-orm";
 import { authenticate, requireAdmin, type AuthRequest } from "../middlewares/auth";
 import bcrypt from "bcryptjs";
 
@@ -39,14 +39,52 @@ router.get("/users", authenticate, requireAdmin, async (req: AuthRequest, res) =
   }
 });
 
-router.get("/users/:id", authenticate, async (req: AuthRequest, res) => {
+router.get("/users/:id/quizzes", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const attempts = await db.select().from(quizAttemptsTable)
+      .where(eq(quizAttemptsTable.userId, id))
+      .orderBy(sql`${quizAttemptsTable.createdAt} desc`)
+      .limit(50);
+
+    if (attempts.length === 0) {
+      res.json([]);
+      return;
+    }
+
+    const quizIds = [...new Set(attempts.map(a => a.quizId))];
+    const quizzes = await db.select({ id: quizzesTable.id, titulo: quizzesTable.titulo, disciplina: quizzesTable.disciplina })
+      .from(quizzesTable)
+      .where(inArray(quizzesTable.id, quizIds));
+
+    const quizMap: Record<number, { titulo: string; disciplina: string }> = {};
+    quizzes.forEach(q => { quizMap[q.id] = { titulo: q.titulo, disciplina: q.disciplina }; });
+
+    res.json(attempts.map(a => ({
+      id: a.id,
+      quizId: a.quizId,
+      quizTitle: quizMap[a.quizId]?.titulo ?? `Quiz #${a.quizId}`,
+      quizDisciplina: quizMap[a.quizId]?.disciplina ?? "—",
+      pontuacao: a.pontuacao,
+      acertos: a.acertos,
+      total: a.total,
+      tempoGasto: a.tempoGasto,
+      createdAt: a.createdAt,
+    })));
+  } catch (err) {
+    (req as AuthRequest).log?.error(err);
+    res.status(500).json({ error: "Erro interno do servidor" });
+  }
+});
+
+router.get("/users/:id", async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const [user] = await db.select().from(usersTable).where(eq(usersTable.id, id));
     if (!user) { res.status(404).json({ error: "Utilizador não encontrado" }); return; }
     res.json({ id: user.id, nome: user.nome, email: user.email, role: user.role, pontos: user.pontos, avatar: user.avatar, bio: user.bio, createdAt: user.createdAt });
   } catch (err) {
-    req.log.error(err);
+    (req as AuthRequest).log?.error(err);
     res.status(500).json({ error: "Erro interno do servidor" });
   }
 });

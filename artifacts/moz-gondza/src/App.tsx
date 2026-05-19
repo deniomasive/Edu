@@ -22,16 +22,14 @@ import Contacto from "@/pages/Contacto";
 import Termos from "@/pages/Termos";
 import Notificacoes from "@/pages/Notificacoes";
 import Perfil from "@/pages/Perfil";
+import PerfilPublico from "@/pages/PerfilPublico";
 import Configuracoes from "@/pages/Configuracoes";
 import Admin from "@/pages/Admin";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient({
   defaultOptions: {
-    queries: {
-      staleTime: 30 * 1000,
-      retry: 1,
-    },
+    queries: { staleTime: 30 * 1000, retry: 1 },
   },
 });
 
@@ -42,7 +40,6 @@ function Router() {
       <Route path="/login" component={Login} />
       <Route path="/registro" component={Registro} />
 
-      {/* Public content pages */}
       <Route path="/exames" component={Exames} />
       <Route path="/exames/:id">
         {(params) => <ExameDetalhe params={params} />}
@@ -61,7 +58,10 @@ function Router() {
       <Route path="/contacto" component={Contacto} />
       <Route path="/termos" component={Termos} />
 
-      {/* Protected pages */}
+      <Route path="/perfil/:userId">
+        {(params) => <PerfilPublico />}
+      </Route>
+
       <Route path="/dashboard">
         <ProtectedRoute><Dashboard /></ProtectedRoute>
       </Route>
@@ -74,8 +74,6 @@ function Router() {
       <Route path="/configuracoes">
         <ProtectedRoute><Configuracoes /></ProtectedRoute>
       </Route>
-
-      {/* Admin only */}
       <Route path="/admin">
         <ProtectedRoute adminOnly><Admin /></ProtectedRoute>
       </Route>

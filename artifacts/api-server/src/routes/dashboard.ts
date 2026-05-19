@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { db, usersTable, examesTable, quizzesTable, videosTable, publicacoesTable, quizAttemptsTable, progressTable } from "@workspace/db";
-import { eq, desc, sql } from "drizzle-orm";
+import { eq, desc, sql, inArray } from "drizzle-orm";
 import { authenticate, requireAdmin, type AuthRequest } from "../middlewares/auth";
 
 const router = Router();
@@ -41,7 +41,7 @@ router.get("/dashboard/stats", authenticate, async (req: AuthRequest, res) => {
     const quizMap: Record<number, string> = {};
     if (quizIds.length > 0) {
       const quizzes = await db.select({ id: quizzesTable.id, titulo: quizzesTable.titulo })
-        .from(quizzesTable).where(sql`${quizzesTable.id} = ANY(${quizIds})`);
+        .from(quizzesTable).where(inArray(quizzesTable.id, quizIds));
       quizzes.forEach(q => { quizMap[q.id] = q.titulo; });
     }
 

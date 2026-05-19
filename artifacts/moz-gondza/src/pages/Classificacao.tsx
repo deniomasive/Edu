@@ -1,3 +1,4 @@
+import { Link } from "wouter";
 import { useGetLeaderboard } from "@workspace/api-client-react";
 import { useAuth } from "@/context/AuthContext";
 import Layout from "@/components/Layout";
@@ -51,14 +52,16 @@ export default function Classificacao() {
               const def = MEDALS[rank - 1];
               if (!def) return null;
               return (
-                <div key={entry.id} className={`text-center ${podiumIdx === 1 ? "-mt-4" : ""}`}>
-                  <div className={`w-16 h-16 rounded-full ${def.color} flex items-center justify-center mx-auto mb-2 border-2 border-border shadow-md`}>
-                    <PodiumMedalIcon def={def} />
+                <Link key={entry.id} href={`/perfil/${entry.id}`}>
+                  <div className={`text-center cursor-pointer group ${podiumIdx === 1 ? "-mt-4" : ""}`}>
+                    <div className={`w-16 h-16 rounded-full ${def.color} flex items-center justify-center mx-auto mb-2 border-2 border-border shadow-md group-hover:scale-105 transition-transform`}>
+                      <PodiumMedalIcon def={def} />
+                    </div>
+                    <p className="font-semibold text-sm text-foreground truncate group-hover:text-primary transition-colors">{entry.nome}</p>
+                    <p className="text-xs text-muted-foreground">{entry.pontos} pts</p>
+                    <Badge variant="outline" className="mt-1 text-xs">{rank}º</Badge>
                   </div>
-                  <p className="font-semibold text-sm text-foreground truncate">{entry.nome}</p>
-                  <p className="text-xs text-muted-foreground">{entry.pontos} pts</p>
-                  <Badge variant="outline" className="mt-1 text-xs">{rank}º</Badge>
-                </div>
+                </Link>
               );
             })}
           </div>
@@ -75,35 +78,32 @@ export default function Classificacao() {
                   const isCurrentUser = user?.id === entry.id;
                   const def = MEDALS[idx];
                   return (
-                    <div
-                      key={entry.id}
-                      className={`flex items-center gap-4 px-6 py-4 transition-colors ${isCurrentUser ? "bg-primary/5 border-l-4 border-l-primary" : "hover:bg-muted/30"}`}
-                    >
-                      <div className="w-8 text-center">
-                        {idx < 3 && def ? (
-                          <div className={`w-7 h-7 rounded-full ${def.color} flex items-center justify-center`}>
-                            <MedalIcon def={def} />
-                          </div>
-                        ) : (
-                          <span className="text-muted-foreground font-medium">{idx + 1}</span>
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className={`font-medium truncate ${isCurrentUser ? "text-primary" : "text-foreground"}`}>
-                          {entry.nome}{" "}
-                          {isCurrentUser && (
-                            <span className="text-xs font-normal text-muted-foreground">(você)</span>
+                    <Link key={entry.id} href={`/perfil/${entry.id}`}>
+                      <div className={`flex items-center gap-4 px-6 py-4 transition-colors cursor-pointer ${isCurrentUser ? "bg-primary/5 border-l-4 border-l-primary" : "hover:bg-muted/30"}`}>
+                        <div className="w-8 text-center">
+                          {idx < 3 && def ? (
+                            <div className={`w-7 h-7 rounded-full ${def.color} flex items-center justify-center`}>
+                              <MedalIcon def={def} />
+                            </div>
+                          ) : (
+                            <span className="text-muted-foreground font-medium">{idx + 1}</span>
                           )}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {(entry as { quizzesFeitos?: number }).quizzesFeitos ?? 0} quizzes realizados
-                        </p>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className={`font-medium truncate hover:text-primary transition-colors ${isCurrentUser ? "text-primary" : "text-foreground"}`}>
+                            {entry.nome}{" "}
+                            {isCurrentUser && <span className="text-xs font-normal text-muted-foreground">(você)</span>}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {(entry as { quizzesFeitos?: number }).quizzesFeitos ?? 0} quizzes realizados
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <span className="font-bold text-primary">{entry.pontos}</span>
+                          <span className="text-xs text-muted-foreground ml-1">pts</span>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <span className="font-bold text-primary">{entry.pontos}</span>
-                        <span className="text-xs text-muted-foreground ml-1">pts</span>
-                      </div>
-                    </div>
+                    </Link>
                   );
                 })}
                 {entries.length === 0 && (

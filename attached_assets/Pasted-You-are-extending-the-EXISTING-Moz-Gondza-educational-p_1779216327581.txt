@@ -1,0 +1,389 @@
+You are extending the EXISTING Moz-Gondza educational platform.
+
+IMPORTANT:
+- DO NOT rebuild the project from scratch.
+- DO NOT remove existing functionality.
+- EXTEND and IMPROVE the current platform.
+- Preserve all existing routes, authentication, database, and UI.
+- Everything must remain 100% functional.
+- ALL texts, labels, descriptions, buttons, feedback, notifications and content MUST stay in Portuguese.
+- Must work perfectly on WINDOWS (Windows 10/11), not Linux/macOS.
+- Automatically fix any broken imports, routes, dependencies or errors.
+- Test everything before finishing.
+
+=================================================
+1. MAKE THE HOMEPAGE CARDS FULLY CLICKABLE
+=================================================
+
+Currently the homepage has sections/cards such as:
+- Resultados
+- Exames Resolvidos
+- Quizzes
+- Vídeos
+- Publicações
+- FAQ
+- Classificação
+
+IMPROVE THIS:
+
+When the user clicks each card, button or feature on Home.jsx, it MUST navigate to the correct page.
+
+Examples:
+
+"Vídeos" → /videos
+
+"Quizzes" → /quizzes
+
+"Exames Resolvidos" → /exames
+
+"Resultados" → /dashboard
+
+"Publicações" → /publicacoes
+
+"FAQ" → /faq
+
+"Classificação" → /classificacao
+
+Requirements:
+- Entire card must be clickable
+- Add hover animation
+- Add cursor pointer
+- Smooth transition effects
+- Use react-router-dom Link
+- No broken routes
+
+Also improve CTA buttons:
+"Começar Gratuitamente" → /registro
+"Saber Mais" → smooth scroll to About section
+
+=================================================
+2. ADD A SOCIAL PROFILE SYSTEM
+=================================================
+
+Turn the platform into an educational social network.
+
+Users must be able to view each other's profiles.
+
+Create:
+
+NEW PAGE:
+PerfilPublico.jsx
+
+NEW ROUTE:
+perfil/:userId
+
+Navbar/Profile links must work.
+
+Features:
+
+Every user profile should display:
+
+1. User basic information:
+- Name
+- Join date
+- Avatar (generate initials if no image)
+- Academic level badge
+
+2. Study statistics:
+- Total quizzes completed
+- Total exercises completed
+- Progress percentage
+- Subjects studied
+- Ranking position
+
+3. Study progress:
+Beautiful progress bars by subject:
+- Matemática
+- Física
+- Química
+- Biologia
+- Português
+- História
+
+4. Quiz history:
+Show quizzes completed:
+- Quiz title
+- Subject
+- Score
+- Completion date
+
+5. Recently completed exams
+
+6. Achievements system:
+Examples:
+- "Primeiro Quiz"
+- "10 Quizzes Resolvidos"
+- "50 Exercícios Concluídos"
+- "Mestre de Matemática"
+- "Top 10 do Ranking"
+
+7. Public profile visibility:
+All users can see profiles of other users.
+
+Examples:
+Click user name in:
+- leaderboard
+- comments
+- dashboard
+- quiz results
+
+Must redirect to:
+/perfil/:userId
+
+Backend:
+Create API endpoints:
+
+GET /api/users
+GET /api/users/:id
+GET /api/users/:id/progress
+GET /api/users/:id/quizzes
+
+Database:
+Add necessary tables/columns.
+
+=================================================
+3. EXPAND THE QUIZ SYSTEM MASSIVELY
+=================================================
+
+The platform needs MANY MORE QUIZZES.
+
+Create a robust quiz database.
+
+Subjects:
+
+Matemática
+- Álgebra
+- Funções
+- Limites
+- Derivadas
+- Integrais
+- Matrizes
+- Trigonometria
+- Geometria Analítica
+- Estatística
+- Probabilidade
+- Equações diferenciais
+- Polinómios
+- Lógica matemática
+
+Física
+- Mecânica
+- Ondas
+- Electricidade
+- Magnetismo
+- Termodinâmica
+
+Química
+- Ligações químicas
+- Estequiometria
+- Ácidos e bases
+- Soluções
+
+Biologia
+- Genética
+- Ecologia
+- Corpo humano
+
+Português
+- Interpretação
+- Gramática
+- Literatura
+
+História
+- História de Moçambique
+- História Mundial
+
+Informática
+- Programação
+- Algoritmos
+- Redes
+
+Economia
+- Matemática Financeira
+- Estatística Económica
+
+Requirements:
+- Add MANY quizzes
+- At least dozens per subject
+- Different difficulty levels:
+  - Fácil
+  - Médio
+  - Difícil
+
+Quiz features:
+- Timer
+- Score
+- Instant correction
+- Final report
+- Retry option
+- Progress saved automatically
+
+After solving quiz:
+Update automatically:
+
+- quizzes resolved count
+- total points
+- progress %
+- completed exercises
+- leaderboard points
+
+Dashboard improvements:
+Show:
+
+"Quizzes Resolvidos"
+
+"Pontuação Total"
+
+"Exercícios Concluídos"
+
+"Progresso Geral"
+
+"Disciplinas Mais Estudadas"
+
+Add beautiful charts and progress indicators.
+
+=================================================
+4. IMPROVE MATHEMATICS SYSTEM USING LATEX
+=================================================
+
+VERY IMPORTANT:
+
+Everything involving mathematics MUST use LaTeX rendering.
+
+Use KaTeX everywhere.
+
+This includes:
+
+1. EXAMS
+
+Question statements:
+must render LaTeX
+
+Solutions:
+must render LaTeX
+
+Step-by-step explanations:
+must render LaTeX
+
+Examples:
+Fractions
+Integrals
+Matrices
+Limits
+Functions
+Systems
+Graphs
+Sigma notation
+Vectors
+
+2. QUIZZES
+
+Math questions MUST support LaTeX.
+
+Examples:
+- Equations
+- Fractions
+- Derivatives
+- Integrals
+- Matrices
+- Logic symbols
+- Probability notation
+
+Answer options also support LaTeX.
+
+3. PUBLICATIONS
+
+If publication contains mathematics:
+Automatically render formulas using KaTeX.
+
+Examples:
+- inline math:
+$ax^2 + bx + c = 0$
+
+- block math:
+$$
+\int_0^1 x^2dx
+$$
+
+Must render beautifully.
+
+4. ADMIN PANEL
+
+Admin must be able to write math using LaTeX syntax.
+
+Example:
+\[
+\frac{-b \pm \sqrt{b^2-4ac}}{2a}
+\]
+
+Preview before saving.
+
+Create:
+"Visualizar LaTeX"
+
+button.
+
+=================================================
+5. IMPROVE DATABASE STRUCTURE
+=================================================
+
+Add/Improve tables:
+
+user_progress
+quiz_attempts
+user_achievements
+user_statistics
+followers
+study_history
+
+Track:
+- completed quizzes
+- exercises completed
+- score history
+- progress per subject
+- solved exams
+- achievements
+- ranking points
+
+=================================================
+6. UI/UX IMPROVEMENTS
+=================================================
+
+Improve professionalism.
+
+Add:
+- loading states
+- skeleton loaders
+- empty states
+- success notifications
+- error handling
+- animations
+- responsive improvements
+
+Design:
+Dark Blue: #1e3a5f
+Orange: #e64a19
+White: #ffffff
+Light Gray: #f9f9f9
+
+Modern card system.
+
+=================================================
+FINAL REQUIREMENTS
+=================================================
+
+1. DO NOT BREAK existing functionality.
+2. EVERYTHING must be connected to backend.
+3. NO placeholders.
+4. ALL routes functional.
+5. ALL cards clickable.
+6. Social profiles fully working.
+7. Progress updates automatically.
+8. Leaderboard updates automatically.
+9. KaTeX working everywhere for mathematics.
+10. Test all pages before finishing.
+11. Fix all errors automatically.
+12. Ensure complete Windows compatibility.
+13. Show updated file structure after implementation.
+14. Verify there are no missing imports.
+15. Ensure app runs successfully in Replit preview.
