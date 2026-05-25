@@ -24,13 +24,14 @@ services:
     rootDir: .
 
     # Build steps (run in order):
-    #   1. Enable corepack → activates pnpm@10.26.1 from packageManager field
-    #   2. Install all workspace deps using committed lockfile
-    #   3. Bundle the Express server with esbuild
-    #   4. Push Drizzle schema to database (idempotent — creates tables if missing)
-    #   5. Seed database with admin user + educational content (idempotent)
+    #   1. Activate pnpm 10.26.1 — tries corepack first (Node 22 ships it);
+    #      falls back to npm install -g if corepack is unavailable on the image.
+    #   2. Install all workspace deps using committed lockfile (no resolution).
+    #   3. Bundle the Express server with esbuild.
+    #   4. Push Drizzle schema to database (idempotent — creates tables if missing).
+    #   5. Seed database with admin user + educational content (idempotent).
     buildCommand: >-
-      corepack enable pnpm &&
+      (corepack enable pnpm || npm install -g pnpm@10.26.1) &&
       pnpm install --frozen-lockfile &&
       pnpm --filter @workspace/api-server run build &&
       pnpm --filter @workspace/db run push &&
@@ -85,7 +86,7 @@ services:
 
     # Install and build the Vite SPA.
     buildCommand: >-
-      corepack enable pnpm &&
+      (corepack enable pnpm || npm install -g pnpm@10.26.1) &&
       pnpm install --frozen-lockfile &&
       pnpm --filter @workspace/moz-gondza run build
 

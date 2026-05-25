@@ -1,0 +1,64 @@
+You are working on a production monorepo already deployed on Render.
+
+CRITICAL CONSTRAINT:
+- The backend is already successfully deployed and working on Render.
+- DO NOT break or restructure the backend.
+- DO NOT change working API behavior.
+- Only fix deployment compatibility issues and pnpm/catalog/Render build problems safely.
+
+CURRENT ISSUE:
+The project uses pnpm workspaces with "catalog:" dependencies, but Render deployment has had instability due to npm/pnpm mismatch and workspace resolution during install/build phases.
+
+GOAL:
+Fix the repository so that:
+1. pnpm catalog works reliably in Render
+2. No npm install step is ever required or triggered in production builds
+3. Backend deployment remains unchanged and continues working
+4. Frontend builds correctly as static site
+5. Monorepo resolution is stable in CI/CD (Render)
+
+RESTRICTIONS:
+- Do NOT modify backend runtime logic or Express app behavior
+- Do NOT change API routes or database schema logic
+- Do NOT remove catalog: dependencies unless absolutely necessary
+- Do NOT break pnpm workspace structure
+- Do NOT change production endpoints or URLs
+
+TASKS TO PERFORM:
+
+1. Ensure pnpm is always the package manager:
+   - Verify package.json has "packageManager": "pnpm@10.x"
+   - Ensure .npmrc enforces pnpm usage correctly
+   - Ensure no npm install fallback is possible in production
+
+2. Fix workspace compatibility:
+   - Verify pnpm-workspace.yaml includes correct paths for:
+     - artifacts/*
+     - lib/*
+     - scripts
+   - Ensure catalog dependencies resolve correctly
+
+3. Fix Render compatibility:
+   - Ensure build scripts do NOT rely on npm
+   - Ensure all build commands assume pnpm + corepack only
+   - Ensure install is always: pnpm install --frozen-lockfile
+
+4. Frontend stability:
+   - Ensure frontend build path is correct for Vite output
+   - Ensure static publish directory is correct (dist folder)
+   - Ensure no mismatch between build output and Render config
+
+5. Backend safety:
+   - Do NOT modify backend code in artifacts/api-server/src
+   - Do NOT modify database schema or runtime logic
+   - Only adjust build/deploy configuration if necessary
+
+EXPECTED OUTCOME:
+- Backend continues working exactly as deployed
+- Frontend builds successfully on Render
+- No "Unsupported URL Type catalog:" errors
+- No npm install interference
+- pnpm is the only package manager used in CI/CD
+- Monorepo resolves correctly in production
+
+Before making changes, ensure no breaking changes to deployed backend exist.
