@@ -1,0 +1,170 @@
+Build this project specifically for DEPLOYMENT ON RENDER with ZERO manual modifications after generation.
+
+IMPORTANT:
+This project must work immediately on Render after GitHub push.
+
+Do NOT optimize only for Replit preview.
+
+Target deployment platform:
+- Render.com
+
+Requirements:
+- Must deploy without changing commands manually.
+- Must deploy without editing package.json.
+- Must deploy without fixing imports.
+- Must deploy without changing environment settings manually.
+
+Generate the project in a Render-ready production architecture.
+
+==================================================
+RENDER COMPATIBILITY REQUIREMENTS
+==================================================
+
+1. CREATE render.yaml automatically
+
+Generate a working render.yaml file in the project root.
+
+It must automatically configure:
+
+Backend:
+- type: web service
+- rootDir
+- buildCommand
+- startCommand
+- environment variables
+- health check path
+
+Frontend:
+- static site
+- publish directory
+- build command
+
+Database:
+- PostgreSQL support
+
+2. NODE VERSION
+
+Use Node.js 22 LTS only.
+
+Add:
+
+package.json:
+"engines": {
+  "node": "22.x"
+}
+
+3. PACKAGE MANAGER
+
+Avoid global installations.
+
+DO NOT USE:
+npm install -g pnpm
+
+Instead:
+- use corepack
+- make pnpm Render compatible
+
+4. BACKEND REQUIREMENTS
+
+Backend must:
+
+- listen on process.env.PORT
+- bind to 0.0.0.0
+- support Render port scanning
+- include health endpoint:
+
+GET /api/healthz
+
+return:
+{
+  "status": "ok"
+}
+
+Use:
+
+const PORT = Number(process.env.PORT || 10000);
+
+app.listen(PORT, "0.0.0.0")
+
+5. ENVIRONMENT VARIABLES
+
+Generate .env.example automatically.
+
+Include:
+
+DATABASE_URL=
+JWT_SECRET=
+NODE_ENV=production
+PORT=10000
+VITE_API_URL=
+
+6. CORS CONFIGURATION
+
+Automatically configure CORS for Render.
+
+Must support:
+localhost
+frontend render domain
+
+7. FRONTEND REQUIREMENTS
+
+React Router must work on Render.
+
+Automatically create:
+
+public/_redirects
+
+with:
+
+/* /index.html 200
+
+Avoid 404 errors on refresh.
+
+8. BUILD SYSTEM
+
+Must compile TypeScript correctly.
+
+No Linux-only commands.
+
+DO NOT USE:
+export NODE_ENV=...
+
+USE cross-platform:
+cross-env
+
+9. MONOREPO SUPPORT
+
+If frontend and backend are separate folders:
+
+frontend/
+backend/
+
+configure Render root directories automatically.
+
+10. DATABASE
+
+Drizzle migrations must work in production.
+
+Include scripts:
+
+db:push
+db:migrate
+db:generate
+
+11. FINAL VALIDATION
+
+Before finishing:
+
+Simulate Render deployment.
+
+Check:
+- build passes
+- backend starts
+- frontend builds
+- routes work
+- no broken imports
+- environment variables valid
+- pnpm compatible
+- render compatible
+
+DO NOT finish until deployment is guaranteed to work on Render with no manual fixes.
