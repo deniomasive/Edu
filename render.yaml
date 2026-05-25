@@ -3,10 +3,14 @@
 # Deploy order (managed by Render): moz-gondza-db → moz-gondza-api → moz-gondza-frontend
 #
 # After FIRST deploy, set two env vars manually in the Render dashboard:
-#   moz-gondza-api     → FRONTEND_URL = https://moz-gondza-frontend.onrender.com
-#   moz-gondza-frontend → VITE_API_URL = https://moz-gondza-api.onrender.com
+#   moz-gondza-api      → FRONTEND_URL = https://moz-gondza-frontend.onrender.com
+#   moz-gondza-frontend → VITE_API_URL  = https://moz-gondza-api.onrender.com
 # Then trigger a manual redeploy of the frontend so the new VITE_API_URL is
 # baked into the static build.
+#
+# Admin credentials on fresh DB:
+#   Email:    value of ADMIN_EMAIL env var  (default: admin@moz-gondza.mz)
+#   Password: value of ADMIN_PASSWORD env var (default: admin123 — CHANGE THIS)
 
 services:
   # ────────────────────────────────────────────────────────────────────────────
@@ -19,17 +23,20 @@ services:
     autoDeploy: true
     rootDir: .
 
-    # 1. Enable corepack so pnpm@10.26.1 (from packageManager field) is used.
-    # 2. Install all workspace deps using the committed lockfile.
-    # 3. Bundle the server with esbuild.
-    # 4. Push the Drizzle schema to the database (idempotent, safe to re-run).
+    # Build steps (run in order):
+    #   1. Enable corepack → activates pnpm@10.26.1 from packageManager field
+    #   2. Install all workspace deps using committed lockfile
+    #   3. Bundle the Express server with esbuild
+    #   4. Push Drizzle schema to database (idempotent — creates tables if missing)
+    #   5. Seed database with admin user + educational content (idempotent)
     buildCommand: >-
       corepack enable pnpm &&
       pnpm install --frozen-lockfile &&
       pnpm --filter @workspace/api-server run build &&
-      pnpm --filter @workspace/db run push
+      pnpm --filter @workspace/db run push &&
+      pnpm --filter @workspace/scripts run seed
 
-    # Start the pre-built bundle — no pnpm needed at runtime.
+    # Start the pre-built ESM bundle — no pnpm needed at runtime.
     startCommand: node --enable-source-maps artifacts/api-server/dist/index.mjs
 
     healthCheckPath: /api/healthz
@@ -37,7 +44,7 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
-      # Pin Node 22 LTS — Render also reads engines.node from package.json.
+      # Pin Node 22 LTS (Render also reads engines.node from package.json).
       - key: NODE_VERSION
         value: "22"
       # Injected automatically from the sibling database service.
@@ -50,7 +57,18 @@ services:
         generateValue: true
       - key: SESSION_SECRET
         generateValue: true
-      # Set to the frontend service URL after first deploy, e.g.:
+      # ── Seed configuration ──────────────────────────────────────────────────
+      # Change these before first deploy to set your admin credentials.
+      # After first deploy the admin account is locked-in; changing these env
+      # vars does NOT reset the password (seed is idempotent).
+      - key: ADMIN_EMAIL
+        value: admin@moz-gondza.mz
+      - key: ADMIN_NAME
+        value: Administrador
+      - key: ADMIN_PASSWORD
+        generateValue: true   # Random secure password — retrieve from Render dashboard
+      # ── CORS ───────────────────────────────────────────────────────────────
+      # Set to the frontend service URL after first deploy:
       # https://moz-gondza-frontend.onrender.com
       - key: FRONTEND_URL
         sync: false
@@ -65,16 +83,17 @@ services:
     autoDeploy: true
     rootDir: .
 
-    # Same install step, then build the Vite SPA.
+    # Install and build the Vite SPA.
     buildCommand: >-
       corepack enable pnpm &&
       pnpm install --frozen-lockfile &&
       pnpm --filter @workspace/moz-gondza run build
 
-    # Vite outputs to artifacts/moz-gondza/dist/public (set in vite.config.ts).
+    # Vite outputs to artifacts/moz-gondza/dist/public (configured in vite.config.ts).
     staticPublishPath: artifacts/moz-gondza/dist/public
 
     # SPA fallback — all paths serve index.html so React Router handles routing.
+    # The public/_redirects file also covers this for extra compatibility.
     routes:
       - type: rewrite
         source: /*
@@ -83,14 +102,14 @@ services:
     envVars:
       - key: NODE_VERSION
         value: "22"
-      # Set to the API service URL after first deploy, e.g.:
+      # Set to the API service URL after first deploy:
       # https://moz-gondza-api.onrender.com
-      # main.tsx reads this at build time and calls setBaseUrl() so all API
-      # requests are sent to the correct cross-origin URL.
+      # main.tsx calls setBaseUrl() with this value so all API requests go to
+      # the correct cross-origin URL in production.
       - key: VITE_API_URL
         sync: false
-      # BASE_PATH and PORT are needed by vite.config.ts (used only by the
-      # dev server config inside the config file, not by the build output).
+      # BASE_PATH and PORT are consumed by vite.config.ts at build time
+      # (used only for dev server config, not baked into the build output).
       - key: BASE_PATH
         value: "/"
       - key: PORT

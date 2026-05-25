@@ -1,0 +1,127 @@
+Yes.
+
+Implement automatic production seeding for Render deployment.
+
+Requirements:
+
+1. Create scripts/seed.ts
+
+This script must automatically run on first deploy and safely seed the database.
+
+2. Auto-create admin account
+
+Create a default admin account ONLY if it does not already exist.
+
+Use environment variables:
+
+ADMIN_NAME=
+ADMIN_EMAIL=
+ADMIN_PASSWORD=
+
+Hash password with bcrypt.
+
+Never create duplicates.
+
+3. Seed educational content
+
+Populate the database automatically with:
+
+- quizzes
+- exames resolvidos
+- publicações
+- vídeo metadata
+- disciplinas
+- categories
+
+Only insert missing data.
+
+Avoid duplicate entries.
+
+Use idempotent seeding.
+
+4. Quiz improvements
+
+Seed MANY quizzes across multiple disciplines and levels:
+
+- Matemática
+- Física
+- Química
+- Biologia
+- Português
+- História
+- Geografia
+- Filosofia
+- Inglês
+- TIC/Informatica
+- Economia
+- Estatística
+- Lógica Matemática
+
+Include:
+- beginner
+- intermediate
+- advanced
+
+Track:
+- completed quizzes
+- score
+- progress %
+- points
+- ranking updates
+
+5. FULL LATEX SUPPORT
+
+Everything mathematical must use LaTeX:
+
+- exercise statements
+- quizzes
+- solutions
+- resolutions
+- formulas
+- mathematical publications
+
+Use KaTeX/LaTeX rendering everywhere.
+
+No plain text math formatting.
+
+6. Production-safe seeding
+
+Seed should run automatically on Render deploy.
+
+Only seed when DB is empty or data missing.
+
+Never wipe production data.
+
+Never duplicate records.
+
+7. Package scripts
+
+Add scripts:
+
+"seed"
+"db:seed"
+
+Ensure Render can run seeding automatically after migrations.
+
+8. Render deployment integration
+
+After migrations:
+
+automatically execute seed script.
+
+Fresh Render PostgreSQL database must be fully populated immediately.
+
+No manual setup required.
+
+9. Final validation
+
+Verify:
+
+✓ admin user created
+✓ quizzes populated
+✓ leaderboard works
+✓ progress system works
+✓ social profile system works
+✓ mathematical LaTeX renders correctly
+✓ no duplicate data
+✓ Render deploy works from empty DB
